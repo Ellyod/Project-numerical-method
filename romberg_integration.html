@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical Calculator</title>
+    <link rel = "stylesheet" href="style.css">
+    
+</head>
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+            <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+            <li><a href="bisection.html">Bisection</a></li>
+            <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+            <li><a href = "composite_simpson.html">Composite Simpson</a>
+            <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+            <li><a href = "cramers.html">Cramer's Rule</a>
+            <li><a href = "definite_integration.html">Definite Integration</a>
+            <li><a href = "double_integration.html">Double Integration</a>
+            <li><a href = "exact_integration.html">Exact Integration</a>
+            <li><a href = "false_position.html">False Position</a>
+            <li><a href = "first_divided_difference.html">First Divided Difference</a>
+            <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+            <li><a href = "gauss_integration.html">Gauss Integration</a>
+            <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+            <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+            <li><a href = "gradient_descent.html">Gradient Descent</a>
+            <li><a href = "graphical_method.html">Graphical Method</a>
+            <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+            <li><a href = "lu_decomposition.html">LU Decomposition</a>
+            <li><a href = "multiple_regression.html">Multiple Regression</a>
+            <li><a href = "newton_raphson.html">Newton-Raphson</a>
+            <li><a href = "numerical_integration.html">Numerical Integration</a>
+            <li><a href = "one_point_iteration.html">One-point Interation</a>
+            <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+            <li><a href = "regression.html">Regression</a>
+            <li><a href = "romberg_integration.html">Romberg Integration</a>
+            <li><a href = "secant_method.html">Secant Method</a>
+            <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+            <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+            <li><a href = "conjugate.html">Conjugate</a>
+            
+
+            
+
+        </ul>
+    </li>
+    </ul>
+    <h1>Romberg Integration</h1>
+    <p>Enter the function of x and the limits a and b:</p>
+    <textarea id="functionInput" placeholder="e.g. Math.sin(x)"></textarea>
+    <input type="number" id="lowerLimit" placeholder="Lower limit (a)">
+    <input type="number" id="upperLimit" placeholder="Upper limit (b)">
+    <br><br>
+    <button onclick="performRombergIntegration()">Perform Romberg Integration</button>
+
+    <div id="results"></div>
+
+    <script>
+        // Function to perform Romberg Integration
+        function performRombergIntegration() {
+            const funcInput = document.getElementById('functionInput').value.trim();
+            const lowerLimit = parseFloat(document.getElementById('lowerLimit').value);
+            const upperLimit = parseFloat(document.getElementById('upperLimit').value);
+
+            if (!funcInput || isNaN(lowerLimit) || isNaN(upperLimit)) {
+                alert('Please enter a valid function and limits.');
+                return;
+            }
+
+            // Convert the string input to a function
+            const func = new Function('x', `return ${funcInput}`);
+
+            // Perform Romberg Integration
+            const result = rombergIntegration(func, lowerLimit, upperLimit, 5);
+            displayResults(result);
+        }
+
+        // Romberg Integration Calculation
+        function rombergIntegration(func, a, b, maxOrder) {
+            const R = Array(maxOrder).fill(null).map(() => Array(maxOrder).fill(0));
+            
+            // Trapezoidal approximations
+            for (let i = 0; i < maxOrder; i++) {
+                R[i][0] = trapezoidalRule(func, a, b, Math.pow(2, i));
+            }
+
+            // Romberg extrapolation
+            for (let j = 1; j < maxOrder; j++) {
+                for (let i = j; i < maxOrder; i++) {
+                    R[i][j] = (Math.pow(4, j) * R[i][j - 1] - R[i - 1][j - 1]) / (Math.pow(4, j) - 1);
+                }
+            }
+
+            return R[maxOrder - 1][maxOrder - 1]; // Highest order result
+        }
+
+        // Helper function: Trapezoidal Rule
+        function trapezoidalRule(func, a, b, n) {
+            const h = (b - a) / n;
+            let sum = (func(a) + func(b)) / 2;
+
+            for (let i = 1; i < n; i++) {
+                sum += func(a + i * h);
+            }
+
+            return sum * h;
+        }
+
+        // Function to display the results
+        function displayResults(result) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `<h2>Romberg Integration Result</h2><pre>Approximate Integral: ${result.toFixed(6)}</pre>`;
+        }
+    </script>
+
+
+
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>

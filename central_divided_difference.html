@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central Divided Difference</title>
+    <link rel = "stylesheet" href="style.css">
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+            <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+            <li><a href="bisection.html">Bisection</a></li>
+            <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+            <li><a href = "composite_simpson.html">Composite Simpson</a>
+            <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+            <li><a href = "cramers.html">Cramer's Rule</a>
+            <li><a href = "definite_integration.html">Definite Integration</a>
+            <li><a href = "double_integration.html">Double Integration</a>
+            <li><a href = "exact_integration.html">Exact Integration</a>
+            <li><a href = "false_position.html">False Position</a>
+            <li><a href = "first_divided_difference.html">First Divided Difference</a>
+            <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+            <li><a href = "gauss_integration.html">Gauss Integration</a>
+            <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+            <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+            <li><a href = "gradient_descent.html">Gradient Descent</a>
+            <li><a href = "graphical_method.html">Graphical Method</a>
+            <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+            <li><a href = "lu_decomposition.html">LU Decomposition</a>
+            <li><a href = "multiple_regression.html">Multiple Regression</a>
+            <li><a href = "newton_raphson.html">Newton-Raphson</a>
+            <li><a href = "numerical_integration.html">Numerical Integration</a>
+            <li><a href = "one_point_iteration.html">One-point Interation</a>
+            <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+            <li><a href = "regression.html">Regression</a>
+            <li><a href = "romberg_integration.html">Romberg Integration</a>
+            <li><a href = "secant_method.html">Secant Method</a>
+            <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+            <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+            <li><a href = "conjugate.html">Conjugate</a>
+            
+
+            
+
+        </ul>
+    </li>
+    </ul>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const CentralDividedDifference = () => {
+            const [func, setFunc] = React.useState("Math.sin(x)");
+            const [x, setX] = React.useState(0);
+            const [h, setH] = React.useState(0.01);
+            const [result, setResult] = React.useState(null);
+
+            // Function to evaluate the mathematical expression
+            const evaluateFunction = (expression, xValue) => {
+                try {
+                    return new Function("x", `return ${expression}`)(xValue);
+                } catch (error) {
+                    alert("Error evaluating function. Please check the expression.");
+                    return null;
+                }
+            };
+
+            // Calculate central divided difference
+            const calculateCentralDifference = () => {
+                const xNum = parseFloat(x);
+                const hNum = parseFloat(h);
+
+                // Evaluate function at x+h and x-h
+                const fPlusH = evaluateFunction(func, xNum + hNum);
+                const fMinusH = evaluateFunction(func, xNum - hNum);
+
+                if (fPlusH === null || fMinusH === null) {
+                    setResult("Error evaluating function.");
+                    return;
+                }
+
+                // Central divided difference formula
+                const derivative = (fPlusH - fMinusH) / (2 * hNum);
+                setResult(`Approximate derivative at x = ${xNum} is ${derivative}`);
+            };
+
+            return (
+                <div style={{ maxWidth: "600px", margin: "auto" }}>
+                    <h2>Central Divided Difference Calculator</h2>
+                    <div>
+                        <label>Function (in terms of x): 
+                            <input
+                                type="text"
+                                value={func}
+                                onChange={(e) => setFunc(e.target.value)}
+                                placeholder="e.g., Math.sin(x)"
+                                style={{ width: "100%", padding: "5px" }}
+                            />
+                        </label>
+                    </div>
+
+                    <div style={{ marginTop: "10px" }}>
+                        <label>Point (x): 
+                            <input
+                                type="number"
+                                value={x}
+                                onChange={(e) => setX(e.target.value)}
+                                placeholder="e.g., 0"
+                                style={{ width: "100%", padding: "5px" }}
+                            />
+                        </label>
+                    </div>
+
+                    <div style={{ marginTop: "10px" }}>
+                        <label>Step Size (h): 
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={h}
+                                onChange={(e) => setH(e.target.value)}
+                                placeholder="e.g., 0.01"
+                                style={{ width: "100%", padding: "5px" }}
+                            />
+                        </label>
+                    </div>
+
+                    <button
+                        onClick={calculateCentralDifference}
+                        style={{
+                            marginTop: "20px",
+                            padding: "10px 20px",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                            width: "100%",
+                            backgroundColor: "#4CAF50",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "5px"
+                        }}
+                    >
+                        Calculate Derivative
+                    </button>
+
+                    <h3 style={{ marginTop: "20px" }}>Result:</h3>
+                    <p>{result}</p>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<CentralDividedDifference />, document.getElementById("root"));
+    </script>
+
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>

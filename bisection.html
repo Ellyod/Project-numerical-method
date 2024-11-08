@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bisection</title>
+    <link rel = "stylesheet" href="style.css">
+    <!-- React and Babel for JSX support -->
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+          <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+          <li><a href="bisection.html">Bisection</a></li>
+          <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+          <li><a href = "composite_simpson.html">Composite Simpson</a>
+          <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+          <li><a href = "cramers.html">Cramer's Rule</a>
+          <li><a href = "definite_integration.html">Definite Integration</a>
+          <li><a href = "double_integration.html">Double Integration</a>
+          <li><a href = "exact_integration.html">Exact Integration</a>
+          <li><a href = "false_position.html">False Position</a>
+          <li><a href = "first_divided_difference.html">First Divided Difference</a>
+          <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+          <li><a href = "gauss_integration.html">Gauss Integration</a>
+          <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+          <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+          <li><a href = "gradient_descent.html">Gradient Descent</a>
+          <li><a href = "graphical_method.html">Graphical Method</a>
+          <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+          <li><a href = "lu_decomposition.html">LU Decomposition</a>
+          <li><a href = "multiple_regression.html">Multiple Regression</a>
+          <li><a href = "newton_raphson.html">Newton-Raphson</a>
+          <li><a href = "numerical_integration.html">Numerical Integration</a>
+          <li><a href = "one_point_iteration.html">One-point Interation</a>
+          <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+          <li><a href = "regression.html">Regression</a>
+          <li><a href = "romberg_integration.html">Romberg Integration</a>
+          <li><a href = "secant_method.html">Secant Method</a>
+          <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+          <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+          <li><a href = "conjugate.html">Conjugate</a>
+            
+
+            
+
+        </ul>
+    </li>
+    </ul>
+    <div id="root"></div>
+    <script type="text/babel">
+        // Bisection Method Component
+        const BisectionMethod = () => {
+          const [func, setFunc] = React.useState("x*x - 4"); // Default function
+          const [a, setA] = React.useState(0); // Interval start
+          const [b, setB] = React.useState(3); // Interval end
+          const [tolerance, setTolerance] = React.useState(0.001); // Error tolerance
+          const [result, setResult] = React.useState(null);
+  
+          // Evaluate function for given x value
+          const evaluateFunction = (expression, x) => {
+            try {
+              return new Function("x", `return ${expression}`)(x);
+            } catch (error) {
+              alert("Error evaluating function. Please check the expression.");
+              return null;
+            }
+          };
+  
+          // Bisection Method Calculation
+          const calculateBisection = () => {
+            let aNum = parseFloat(a);
+            let bNum = parseFloat(b);
+            let tol = parseFloat(tolerance);
+  
+            if (evaluateFunction(func, aNum) * evaluateFunction(func, bNum) >= 0) {
+              setResult("Bisection method fails. f(a) and f(b) must have opposite signs.");
+              return;
+            }
+  
+            let midpoint;
+            let iteration = 0;
+  
+            while (Math.abs(bNum - aNum) / 2 > tol) {
+              midpoint = (aNum + bNum) / 2;
+              const fMid = evaluateFunction(func, midpoint);
+  
+              if (fMid === 0) {
+                setResult(`Root found at x = ${midpoint}`);
+                return;
+              } else if (evaluateFunction(func, aNum) * fMid < 0) {
+                bNum = midpoint;
+              } else {
+                aNum = midpoint;
+              }
+  
+              iteration++;
+            }
+  
+            setResult(`Root approximately at x = ${midpoint}, after ${iteration} iterations`);
+          };
+  
+          return (
+            <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+              <h2>Bisection Method Calculator</h2>
+              
+              <div>
+                <label>Function (in terms of x): 
+                  <input
+                    type="text"
+                    value={func}
+                    onChange={(e) => setFunc(e.target.value)}
+                    placeholder="e.g., x*x - 4"
+                    style={{ marginLeft: "10px", padding: "5px" }}
+                  />
+                </label>
+              </div>
+  
+              <div style={{ marginTop: "10px" }}>
+                <label>Interval Start (a): 
+                  <input
+                    type="number"
+                    value={a}
+                    onChange={(e) => setA(e.target.value)}
+                    placeholder="e.g., 0"
+                    style={{ marginLeft: "10px", padding: "5px" }}
+                  />
+                </label>
+              </div>
+  
+              <div style={{ marginTop: "10px" }}>
+                <label>Interval End (b): 
+                  <input
+                    type="number"
+                    value={b}
+                    onChange={(e) => setB(e.target.value)}
+                    placeholder="e.g., 3"
+                    style={{ marginLeft: "10px", padding: "5px" }}
+                  />
+                </label>
+              </div>
+  
+              <div style={{ marginTop: "10px" }}>
+                <label>Tolerance: 
+                  <input
+                    type="number"
+                    step="0.0001"
+                    value={tolerance}
+                    onChange={(e) => setTolerance(e.target.value)}
+                    placeholder="e.g., 0.001"
+                    style={{ marginLeft: "10px", padding: "5px" }}
+                  />
+                </label>
+              </div>
+  
+              <button
+                onClick={calculateBisection}
+                style={{
+                  marginTop: "20px",
+                  padding: "10px 20px",
+                  fontSize: "16px",
+                  cursor: "pointer"
+                }}
+              >
+                Calculate Root
+              </button>
+  
+              <h3 style={{ marginTop: "20px" }}>Result:</h3>
+              <p>{result}</p>
+            </div>
+          );
+        };
+  
+        ReactDOM.render(<BisectionMethod />, document.getElementById("root"));
+      </script>
+
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>

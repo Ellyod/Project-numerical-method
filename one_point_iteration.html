@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical Calculator</title>
+    <link rel = "stylesheet" href="style.css">
+    
+</head>
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+            <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+            <li><a href="bisection.html">Bisection</a></li>
+            <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+            <li><a href = "composite_simpson.html">Composite Simpson</a>
+            <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+            <li><a href = "cramers.html">Cramer's Rule</a>
+            <li><a href = "definite_integration.html">Definite Integration</a>
+            <li><a href = "double_integration.html">Double Integration</a>
+            <li><a href = "exact_integration.html">Exact Integration</a>
+            <li><a href = "false_position.html">False Position</a>
+            <li><a href = "first_divided_difference.html">First Divided Difference</a>
+            <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+            <li><a href = "gauss_integration.html">Gauss Integration</a>
+            <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+            <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+            <li><a href = "gradient_descent.html">Gradient Descent</a>
+            <li><a href = "graphical_method.html">Graphical Method</a>
+            <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+            <li><a href = "lu_decomposition.html">LU Decomposition</a>
+            <li><a href = "multiple_regression.html">Multiple Regression</a>
+            <li><a href = "newton_raphson.html">Newton-Raphson</a>
+            <li><a href = "numerical_integration.html">Numerical Integration</a>
+            <li><a href = "one_point_iteration.html">One-point Interation</a>
+            <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+            <li><a href = "regression.html">Regression</a>
+            <li><a href = "romberg_integration.html">Romberg Integration</a>
+            <li><a href = "secant_method.html">Secant Method</a>
+            <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+            <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+            <li><a href = "conjugate.html">Conjugate</a>
+            
+
+            
+
+        </ul>
+    </li>
+    </ul>
+    <h1>One-Point Iteration</h1>
+    <p>Enter the function \( g(x) \) and the initial guess for \( x \).</p>
+    <input id="functionInput" placeholder="e.g. Math.cos(x)" />
+    <input id="initialGuess" type="number" placeholder="Initial guess for x" />
+    <br>
+    <button onclick="performOnePointIteration()">Perform Iteration</button>
+  
+    <div id="results"></div>
+    <script>
+        // Function to perform One-Point Iteration
+        function performOnePointIteration() {
+          const functionInput = document.getElementById('functionInput').value.trim();
+          const initialGuess = parseFloat(document.getElementById('initialGuess').value);
+
+          if (!functionInput || isNaN(initialGuess)) {
+            alert('Please enter a valid function and initial guess.');
+            return;
+          }
+
+          // Define g(x) function based on user input
+          const g = new Function('x', `return ${functionInput}`);
+
+          // Perform one-point iteration
+          const result = onePointIteration(g, initialGuess);
+          displayResults(result);
+        }
+
+        // One-Point Iteration Method
+        function onePointIteration(g, initialGuess, tolerance = 1e-6, maxIterations = 100) {
+          let x0 = initialGuess;
+          let x1;
+          let iterations = 0;
+          let converged = false;
+
+          while (iterations < maxIterations) {
+            x1 = g(x0);
+            if (Math.abs(x1 - x0) < tolerance) {
+              converged = true;
+              break;
+            }
+            x0 = x1;
+            iterations++;
+          }
+
+          return {
+            root: x1,
+            iterations,
+            converged
+          };
+        }
+
+        // Function to display the iteration results
+        function displayResults(result) {
+          const resultsDiv = document.getElementById('results');
+          resultsDiv.innerHTML = '';
+
+          let message = `<h2>One-Point Iteration Result</h2>`;
+          message += `<pre>Root: ${result.root}</pre>`;
+          message += `<pre>Iterations: ${result.iterations}</pre>`;
+          message += `<pre>Converged: ${result.converged ? 'Yes' : 'No'}</pre>`;
+          
+          resultsDiv.innerHTML = message;
+        }
+    </script>
+
+
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>

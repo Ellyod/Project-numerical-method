@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cramer's Rule</title>
+    <link rel = "stylesheet" href="style.css">
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input {
+            margin: 5px 0;
+            padding: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+            <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+            <li><a href="bisection.html">Bisection</a></li>
+            <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+            <li><a href = "composite_simpson.html">Composite Simpson</a>
+            <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+            <li><a href = "cramers.html">Cramer's Rule</a>
+            <li><a href = "definite_integration.html">Definite Integration</a>
+            <li><a href = "double_integration.html">Double Integration</a>
+            <li><a href = "exact_integration.html">Exact Integration</a>
+            <li><a href = "false_position.html">False Position</a>
+            <li><a href = "first_divided_difference.html">First Divided Difference</a>
+            <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+            <li><a href = "gauss_integration.html">Gauss Integration</a>
+            <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+            <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+            <li><a href = "gradient_descent.html">Gradient Descent</a>
+            <li><a href = "graphical_method.html">Graphical Method</a>
+            <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+            <li><a href = "lu_decomposition.html">LU Decomposition</a>
+            <li><a href = "multiple_regression.html">Multiple Regression</a>
+            <li><a href = "newton_raphson.html">Newton-Raphson</a>
+            <li><a href = "numerical_integration.html">Numerical Integration</a>
+            <li><a href = "one_point_iteration.html">One-point Interation</a>
+            <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+            <li><a href = "regression.html">Regression</a>
+            <li><a href = "romberg_integration.html">Romberg Integration</a>
+            <li><a href = "secant_method.html">Secant Method</a>
+            <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+            <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+            <li><a href = "conjugate.html">Conjugate</a>
+
+            
+
+        </ul>
+    </li>
+    </ul>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const CramersRule = () => {
+            const [a1, setA1] = React.useState(0);
+            const [a2, setA2] = React.useState(0);
+            const [b1, setB1] = React.useState(0);
+            const [b2, setB2] = React.useState(0);
+            const [result, setResult] = React.useState(null);
+
+            // Function to calculate the determinant of a 2x2 matrix
+            const determinant2x2 = (a, b, c, d) => a * d - b * c;
+
+            const calculateCramers = () => {
+                const detA = determinant2x2(a1, a2, b1, b2);
+                const detA1 = determinant2x2(0, a2, 0, b2); // Replace the first column of A with the constants
+                const detA2 = determinant2x2(a1, 0, b1, 0); // Replace the second column of A with the constants
+
+                if (detA !== 0) {
+                    // 2x2 system solution
+                    const x1 = detA1 / detA;
+                    const x2 = detA2 / detA;
+                    setResult(`x1 = ${x1}, x2 = ${x2}`);
+                } else {
+                    setResult("No unique solution for 2x2 system.");
+                }
+            };
+
+            return (
+                <div style={{ maxWidth: "600px", margin: "auto" }}>
+                    <h2>Cramer's Rule Calculator (2x2)</h2>
+
+                    <div>
+                        <label>a1: 
+                            <input
+                                type="number"
+                                value={a1}
+                                onChange={(e) => setA1(Number(e.target.value))}
+                            />
+                        </label>
+                        <label>a2: 
+                            <input
+                                type="number"
+                                value={a2}
+                                onChange={(e) => setA2(Number(e.target.value))}
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>b1: 
+                            <input
+                                type="number"
+                                value={b1}
+                                onChange={(e) => setB1(Number(e.target.value))}
+                            />
+                        </label>
+                        <label>b2: 
+                            <input
+                                type="number"
+                                value={b2}
+                                onChange={(e) => setB2(Number(e.target.value))}
+                            />
+                        </label>
+                    </div>
+
+                    <button onClick={calculateCramers}>Calculate</button>
+
+                    {result && <h3>Result: {result}</h3>}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<CramersRule />, document.getElementById('root'));
+    </script>
+
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>

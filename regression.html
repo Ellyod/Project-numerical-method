@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical Calculator</title>
+    <link rel = "stylesheet" href="style.css">
+    
+</head>
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+            <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+            <li><a href="bisection.html">Bisection</a></li>
+            <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+            <li><a href = "composite_simpson.html">Composite Simpson</a>
+            <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+            <li><a href = "cramers.html">Cramer's Rule</a>
+            <li><a href = "definite_integration.html">Definite Integration</a>
+            <li><a href = "double_integration.html">Double Integration</a>
+            <li><a href = "exact_integration.html">Exact Integration</a>
+            <li><a href = "false_position.html">False Position</a>
+            <li><a href = "first_divided_difference.html">First Divided Difference</a>
+            <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+            <li><a href = "gauss_integration.html">Gauss Integration</a>
+            <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+            <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+            <li><a href = "gradient_descent.html">Gradient Descent</a>
+            <li><a href = "graphical_method.html">Graphical Method</a>
+            <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+            <li><a href = "lu_decomposition.html">LU Decomposition</a>
+            <li><a href = "multiple_regression.html">Multiple Regression</a>
+            <li><a href = "newton_raphson.html">Newton-Raphson</a>
+            <li><a href = "numerical_integration.html">Numerical Integration</a>
+            <li><a href = "one_point_iteration.html">One-point Interation</a>
+            <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+            <li><a href = "regression.html">Regression</a>
+            <li><a href = "romberg_integration.html">Romberg Integration</a>
+            <li><a href = "secant_method.html">Secant Method</a>
+            <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+            <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+            <li><a href = "conjugate.html">Conjugate</a>
+            
+
+            
+
+        </ul>
+    </li>
+        <li><a href="#">About This Project</a></li>
+        <li><a href ="#">Contact Us</a></li>  
+    </ul>
+    <h1>Simple Linear Regression</h1>
+    <p>Enter data in the format: X,Y for each row. Separate rows with newlines.</p>
+    <textarea id="dataInput" placeholder="e.g. 1,2\n2,3\n4,5"></textarea>
+    <br>
+    <button onclick="performRegression()">Perform Regression</button>
+
+    <div id="results"></div>
+    <script>
+        function performRegression() {
+            const dataInput = document.getElementById('dataInput').value.trim();
+            if (!dataInput) {
+                alert('Please enter some data.');
+                return;
+            }
+
+            const rows = dataInput.split('\n').map(row => row.split(',').map(Number));
+            const X = rows.map(row => row[0]);
+            const Y = rows.map(row => row[1]);
+
+            const result = simpleLinearRegression(X, Y);
+            displayResults(result);
+        }
+
+        function simpleLinearRegression(X, Y) {
+            const n = X.length;
+            const sumX = X.reduce((acc, val) => acc + val, 0);
+            const sumY = Y.reduce((acc, val) => acc + val, 0);
+            const sumXY = X.reduce((acc, val, i) => acc + val * Y[i], 0);
+            const sumX2 = X.reduce((acc, val) => acc + val * val, 0);
+
+            const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+            const intercept = (sumY - slope * sumX) / n;
+
+            return { slope, intercept };
+        }
+
+        function displayResults({ slope, intercept }) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <h2>Regression Coefficients</h2>
+                <pre>Slope (b): ${slope.toFixed(4)}</pre>
+                <pre>Intercept (a): ${intercept.toFixed(4)}</pre>
+                <h2>Regression Equation</h2>
+                <pre>Y = ${intercept.toFixed(4)} + ${slope.toFixed(4)} * X</pre>
+            `;
+        }
+    </script>
+
+
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>

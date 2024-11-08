@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newton-Raphson</title>
+    <link rel = "stylesheet" href="style.css">
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 20px;
+          text-align: center;
+        }
+    
+        input, textarea {
+          width: 100%;
+          padding: 10px;
+          margin: 10px 0;
+          font-size: 16px;
+        }
+    
+        button {
+          padding: 10px 20px;
+          font-size: 16px;
+          cursor: pointer;
+          background-color: #007BFF;
+          color: white;
+          border: none;
+          border-radius: 5px;
+        }
+    
+        button:hover {
+          background-color: #0056b3;
+        }
+    
+        pre {
+          text-align: left;
+          background-color: #f4f4f4;
+          padding: 15px;
+          border-radius: 5px;
+          overflow-x: auto;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          margin-top: 20px;
+        }
+    
+        h2 {
+          margin-top: 30px;
+        }
+      </style>
+    
+</head>
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+            <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+            <li><a href="bisection.html">Bisection</a></li>
+            <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+            <li><a href = "composite_simpson.html">Composite Simpson</a>
+            <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+            <li><a href = "cramers.html">Cramer's Rule</a>
+            <li><a href = "definite_integration.html">Definite Integration</a>
+            <li><a href = "double_integration.html">Double Integration</a>
+            <li><a href = "exact_integration.html">Exact Integration</a>
+            <li><a href = "false_position.html">False Position</a>
+            <li><a href = "first_divided_difference.html">First Divided Difference</a>
+            <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+            <li><a href = "gauss_integration.html">Gauss Integration</a>
+            <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+            <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+            <li><a href = "gradient_descent.html">Gradient Descent</a>
+            <li><a href = "graphical_method.html">Graphical Method</a>
+            <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+            <li><a href = "lu_decomposition.html">LU Decomposition</a>
+            <li><a href = "multiple_regression.html">Multiple Regression</a>
+            <li><a href = "newton_raphson.html">Newton-Raphson</a>
+            <li><a href = "numerical_integration.html">Numerical Integration</a>
+            <li><a href = "one_point_iteration.html">One-point Interation</a>
+            <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+            <li><a href = "regression.html">Regression</a>
+            <li><a href = "romberg_integration.html">Romberg Integration</a>
+            <li><a href = "secant_method.html">Secant Method</a>
+            <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+            <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+            <li><a href = "conjugate.html">Conjugate</a>
+            
+
+            
+
+        </ul>
+    </li>
+    </ul>
+
+    <h1>Newton-Raphson Method</h1>
+    <p>Find the root of a function using the Newton-Raphson method.</p>
+  
+    <label for="functionInput">Function (f(x)): </label>
+    <input type="text" id="functionInput" placeholder="e.g. x^2 - 5">
+    
+    <label for="derivativeInput">Derivative (f'(x)): </label>
+    <input type="text" id="derivativeInput" placeholder="e.g. 2*x">
+  
+    <label for="initialGuess">Initial Guess (x₀): </label>
+    <input type="number" id="initialGuess" value="1" step="any">
+  
+    <label for="tolerance">Tolerance: </label>
+    <input type="number" id="tolerance" value="0.0001" step="any">
+  
+    <button onclick="findRoot()">Find Root</button>
+  
+    <div id="results"></div>
+
+    <script>
+        // Function to evaluate the mathematical expression using a given x value
+        function evaluateExpression(expr, x) {
+          // Replace x with the value
+          const expression = expr.replace(/x/g, `(${x})`);
+          try {
+            return new Function('x', `return ${expression}`)(x);
+          } catch (e) {
+            return NaN;
+          }
+        }
+    
+        // Newton-Raphson method to find the root of a function
+        function newtonRaphson(func, funcDerivative, x0, tolerance = 0.0001, maxIter = 100) {
+          let x = x0;
+          let iteration = 0;
+          let fValue = evaluateExpression(func, x);
+          let fPrimeValue = evaluateExpression(funcDerivative, x);
+    
+          while (Math.abs(fValue) > tolerance && iteration < maxIter) {
+            if (Math.abs(fPrimeValue) < tolerance) {
+              return { root: NaN, iterations: iteration, error: "Derivative too small" };
+            }
+            x = x - fValue / fPrimeValue;
+            fValue = evaluateExpression(func, x);
+            fPrimeValue = evaluateExpression(funcDerivative, x);
+            iteration++;
+          }
+    
+          return { root: x, iterations: iteration, error: null };
+        }
+    
+        // Function to handle the Newton-Raphson method
+        function findRoot() {
+          const func = document.getElementById("functionInput").value.trim();
+          const funcDerivative = document.getElementById("derivativeInput").value.trim();
+          const initialGuess = parseFloat(document.getElementById("initialGuess").value);
+          const tolerance = parseFloat(document.getElementById("tolerance").value);
+    
+          if (!func || !funcDerivative || isNaN(initialGuess) || isNaN(tolerance)) {
+            alert("Please enter valid data.");
+            return;
+          }
+    
+          const result = newtonRaphson(func, funcDerivative, initialGuess, tolerance);
+    
+          displayResults(result);
+        }
+    
+        // Display the results
+        function displayResults(result) {
+          const resultsDiv = document.getElementById("results");
+          resultsDiv.innerHTML = "";
+    
+          if (result.error) {
+            resultsDiv.innerHTML = `<h2>Error</h2><pre>${result.error}</pre>`;
+          } else {
+            resultsDiv.innerHTML = `
+              <h2>Root Found:</h2>
+              <pre>Root: ${result.root}</pre>
+              <h2>Iterations:</h2>
+              <pre>${result.iterations}</pre>
+            `;
+          }
+        }
+      </script>
+
+
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>

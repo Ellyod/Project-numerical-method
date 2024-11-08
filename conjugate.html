@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical Calculator</title>
+    <link rel = "stylesheet" href="style.css">
+    
+</head>
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+            <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+            <li><a href="bisection.html">Bisection</a></li>
+            <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+            <li><a href = "composite_simpson.html">Composite Simpson</a>
+            <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+            <li><a href = "cramers.html">Cramer's Rule</a>
+            <li><a href = "definite_integration.html">Definite Integration</a>
+            <li><a href = "double_integration.html">Double Integration</a>
+            <li><a href = "exact_integration.html">Exact Integration</a>
+            <li><a href = "false_position.html">False Position</a>
+            <li><a href = "first_divided_difference.html">First Divided Difference</a>
+            <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+            <li><a href = "gauss_integration.html">Gauss Integration</a>
+            <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+            <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+            <li><a href = "gradient_descent.html">Gradient Descent</a>
+            <li><a href = "graphical_method.html">Graphical Method</a>
+            <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+            <li><a href = "lu_decomposition.html">LU Decomposition</a>
+            <li><a href = "multiple_regression.html">Multiple Regression</a>
+            <li><a href = "newton_raphson.html">Newton-Raphson</a>
+            <li><a href = "numerical_integration.html">Numerical Integration</a>
+            <li><a href = "one_point_iteration.html">One-point Interation</a>
+            <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+            <li><a href = "regression.html">Regression</a>
+            <li><a href = "romberg_integration.html">Romberg Integration</a>
+            <li><a href = "secant_method.html">Secant Method</a>
+            <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+            <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+            <li><a href = "conjugate.html">Conjugate</a>
+            
+
+            
+
+        </ul>
+    </li>
+    </ul>
+    <h1>Multiple Linear Regression - Conjugate Gradient</h1>
+    <p>Enter data in the format: X1,X2,...,Xn,Y for each row. Separate rows with newlines.</p>
+    <textarea id="dataInput" placeholder="e.g. 1,2,3,4\n2,3,4,5\n4,5,6,7"></textarea>
+    <br>
+    <button onclick="performRegression()">Perform Regression</button>
+  
+    <div id="results"></div>
+
+    <script>
+        // Function to perform Multiple Linear Regression using Conjugate Gradient
+        function performRegression() {
+          const dataInput = document.getElementById('dataInput').value.trim();
+          if (!dataInput) {
+            alert('Please enter some data.');
+            return;
+          }
+
+          // Parse the data input into an array of rows and columns
+          const rows = dataInput.split('\n').map(row => row.split(',').map(Number));
+          const X = rows.map(row => row.slice(0, row.length - 1)); // Independent variables
+          const Y = rows.map(row => row[row.length - 1]); // Dependent variable
+
+          // Perform regression using Conjugate Gradient Method
+          const result = conjugateGradient(X, Y);
+          displayResults(result);
+        }
+
+        // Conjugate Gradient Method for Multiple Linear Regression
+        function conjugateGradient(X, Y) {
+          const X_with_intercept = X.map(row => [1, ...row]); // Add a column of ones for the intercept
+          const A = multiplyMatrices(transpose(X_with_intercept), X_with_intercept); // A = X^T * X
+          const b = multiplyMatrices(transpose(X_with_intercept), Y); // b = X^T * Y
+
+          // Initial guess for coefficients (0s)
+          let x = new Array(A.length).fill(0);
+
+          let r = subtractMatrices(b, multiplyMatrices(A, x)); // r = b - A * x
+          let p = r.slice(); // p = r
+          let rsOld = dotProduct(r, r); // rsOld = r^T * r
+
+          let maxIterations = 1000;
+          let tolerance = 1e-6;
+
+          for (let i = 0; i < maxIterations; i++) {
+            const Ap = multiplyMatrices(A, p);
+            const alpha = rsOld / dotProduct(p, Ap); // alpha = rsOld / (p^T * Ap)
+            x = addMatrices(x, scaleMatrix(p, alpha)); // x = x + alpha * p
+            r = subtractMatrices(r, scaleMatrix(Ap, alpha)); // r = r - alpha * Ap
+
+            const rsNew = dotProduct(r, r); // rsNew = r^T * r
+            if (Math.sqrt(rsNew) < tolerance) break; // Stop if the residual is small enough
+            const beta = rsNew / rsOld; // beta = rsNew / rsOld
+            p = addMatrices(r, scaleMatrix(p, beta)); // p = r + beta * p
+            rsOld = rsNew; // Update rsOld for the next iteration
+          }
+
+          return x;
+        }
+
+        // Helper functions
+        function transpose(matrix) {
+          return matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]));
+        }
+
+        function multiplyMatrices(A, B) {
+          const result = [];
+          for (let i = 0; i < A.length; i++) {
+            result[i] = [];
+            for (let j = 0; j < B[0].length; j++) {
+              result[i][j] = A[i].reduce((sum, a, k) => sum + a * B[k][j], 0);
+            }
+          }
+          return result;
+        }
+
+        function subtractMatrices(A, B) {
+          return A.map((row, i) => row.map((val, j) => val - B[i][j]));
+        }
+
+        function addMatrices(A, B) {
+          return A.map((row, i) => row.map((val, j) => val + B[i][j]));
+        }
+
+        function scaleMatrix(matrix, scalar) {
+          return matrix.map(row => row.map(val => val * scalar));
+        }
+
+        function dotProduct(A, B) {
+          return A.reduce((sum, val, idx) => sum + val * B[idx], 0);
+        }
+
+        // Function to display the regression results
+        function displayResults(coefficients) {
+          const resultsDiv = document.getElementById('results');
+          resultsDiv.innerHTML = '';
+
+          let equation = 'Y = ';
+          equation += coefficients.map((coef, idx) => (idx === 0 ? `${coef}` : ` + ${coef} * X${idx}`)).join('');
+          
+          resultsDiv.innerHTML = `<h2>Regression Coefficients</h2><pre>${JSON.stringify(coefficients, null, 2)}</pre>
+                                  <h2>Regression Equation</h2><pre>${equation}</pre>`;
+        }
+    </script>
+
+
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>

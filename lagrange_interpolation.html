@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lagrange interpolation</title>
+    <link rel = "stylesheet" href="style.css">
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input {
+            margin: 5px;
+            padding: 5px;
+            width: 60px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .graph-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+    </style>
+    
+</head>
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+            <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+            <li><a href="bisection.html">Bisection</a></li>
+            <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+            <li><a href = "composite_simpson.html">Composite Simpson</a>
+            <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+            <li><a href = "cramers.html">Cramer's Rule</a>
+            <li><a href = "definite_integration.html">Definite Integration</a>
+            <li><a href = "double_integration.html">Double Integration</a>
+            <li><a href = "exact_integration.html">Exact Integration</a>
+            <li><a href = "false_position.html">False Position</a>
+            <li><a href = "first_divided_difference.html">First Divided Difference</a>
+            <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+            <li><a href = "gauss_integration.html">Gauss Integration</a>
+            <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+            <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+            <li><a href = "gradient_descent.html">Gradient Descent</a>
+            <li><a href = "graphical_method.html">Graphical Method</a>
+            <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+            <li><a href = "lu_decomposition.html">LU Decomposition</a>
+            <li><a href = "multiple_regression.html">Multiple Regression</a>
+            <li><a href = "newton_raphson.html">Newton-Raphson</a>
+            <li><a href = "numerical_integration.html">Numerical Integration</a>
+            <li><a href = "one_point_iteration.html">One-point Interation</a>
+            <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+            <li><a href = "regression.html">Regression</a>
+            <li><a href = "romberg_integration.html">Romberg Integration</a>
+            <li><a href = "secant_method.html">Secant Method</a>
+            <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+            <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+            <li><a href = "conjugate.html">Conjugate</a>
+            
+
+            
+
+        </ul>
+    </li>
+    </ul>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const LagrangeInterpolation = () => {
+            const [points, setPoints] = useState([{ x: 0, y: 1 }, { x: 1, y: 2 }]);
+            const [newX, setNewX] = useState("");
+            const [newY, setNewY] = useState("");
+            const [plotData, setPlotData] = useState(null);
+
+            const addPoint = () => {
+                if (newX !== "" && newY !== "") {
+                    setPoints([...points, { x: parseFloat(newX), y: parseFloat(newY) }]);
+                    setNewX("");
+                    setNewY("");
+                }
+            };
+
+            const lagrangeInterpolation = (xValues, yValues, x) => {
+                let result = 0;
+                const n = xValues.length;
+
+                for (let i = 0; i < n; i++) {
+                    let term = yValues[i];
+                    for (let j = 0; j < n; j++) {
+                        if (j !== i) {
+                            term *= (x - xValues[j]) / (xValues[i] - xValues[j]);
+                        }
+                    }
+                    result += term;
+                }
+
+                return result;
+            };
+
+            const generatePlotData = () => {
+                const xValues = points.map(point => point.x);
+                const yValues = points.map(point => point.y);
+
+                const plotX = [];
+                const plotY = [];
+                const min = Math.min(...xValues) - 1;
+                const max = Math.max(...xValues) + 1;
+                const step = (max - min) / 100;
+
+                for (let x = min; x <= max; x += step) {
+                    plotX.push(x);
+                    plotY.push(lagrangeInterpolation(xValues, yValues, x));
+                }
+
+                setPlotData([
+                    {
+                        x: plotX,
+                        y: plotY,
+                        type: 'scatter',
+                        mode: 'lines',
+                        name: 'Interpolated Polynomial',
+                        line: { color: 'blue' }
+                    },
+                    {
+                        x: xValues,
+                        y: yValues,
+                        type: 'scatter',
+                        mode: 'markers',
+                        name: 'Data Points',
+                        marker: { color: 'red', size: 8 }
+                    }
+                ]);
+            };
+
+            React.useEffect(() => {
+                if (plotData) {
+                    Plotly.newPlot('plot', plotData, {
+                        title: 'Lagrange Interpolation',
+                        xaxis: { title: 'x' },
+                        yaxis: { title: 'f(x)' }
+                    });
+                }
+            }, [plotData]);
+
+            return (
+                <div style={{ maxWidth: "600px", margin: "auto" }}>
+                    <h2>Lagrange Interpolation</h2>
+                    
+                    <div>
+                        <label>Enter Data Points (x, y):</label><br/>
+                        <input
+                            type="number"
+                            value={newX}
+                            onChange={(e) => setNewX(e.target.value)}
+                            placeholder="x"
+                        />
+                        <input
+                            type="number"
+                            value={newY}
+                            onChange={(e) => setNewY(e.target.value)}
+                            placeholder="y"
+                        />
+                        <button onClick={addPoint}>Add Point</button>
+                    </div>
+
+                    <div>
+                        <button onClick={generatePlotData}>Plot Polynomial</button>
+                    </div>
+
+                    <div className="graph-container">
+                        <div id="plot"></div>
+                    </div>
+
+                    <div>
+                        <h4>Data Points:</h4>
+                        <ul>
+                            {points.map((point, index) => (
+                                <li key={index}>({point.x}, {point.y})</li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<LagrangeInterpolation />, document.getElementById('root'));
+    </script>
+
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>

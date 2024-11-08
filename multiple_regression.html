@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Linear Regression</title>
+    <link rel = "stylesheet" href="style.css">
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 20px;
+          text-align: center;
+        }
+    
+        textarea {
+          width: 100%;
+          height: 100px;
+          padding: 10px;
+          font-size: 16px;
+          margin-bottom: 20px;
+          resize: vertical;
+        }
+    
+        button {
+          padding: 10px 20px;
+          font-size: 16px;
+          cursor: pointer;
+          background-color: #007BFF;
+          color: white;
+          border: none;
+          border-radius: 5px;
+        }
+    
+        button:hover {
+          background-color: #0056b3;
+        }
+    
+        pre {
+          text-align: left;
+          background-color: #f4f4f4;
+          padding: 15px;
+          border-radius: 5px;
+          overflow-x: auto;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          margin-top: 20px;
+        }
+    
+        h2 {
+          margin-top: 30px;
+        }
+      </style>
+    
+</head>
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+            <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+            <li><a href="bisection.html">Bisection</a></li>
+            <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+            <li><a href = "composite_simpson.html">Composite Simpson</a>
+            <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+            <li><a href = "cramers.html">Cramer's Rule</a>
+            <li><a href = "definite_integration.html">Definite Integration</a>
+            <li><a href = "double_integration.html">Double Integration</a>
+            <li><a href = "exact_integration.html">Exact Integration</a>
+            <li><a href = "false_position.html">False Position</a>
+            <li><a href = "first_divided_difference.html">First Divided Difference</a>
+            <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+            <li><a href = "gauss_integration.html">Gauss Integration</a>
+            <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+            <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+            <li><a href = "gradient_descent.html">Gradient Descent</a>
+            <li><a href = "graphical_method.html">Graphical Method</a>
+            <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+            <li><a href = "lu_decomposition.html">LU Decomposition</a>
+            <li><a href = "multiple_regression.html">Multiple Regression</a>
+            <li><a href = "newton_raphson.html">Newton-Raphson</a>
+            <li><a href = "numerical_integration.html">Numerical Integration</a>
+            <li><a href = "one_point_iteration.html">One-point Interation</a>
+            <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+            <li><a href = "regression.html">Regression</a>
+            <li><a href = "romberg_integration.html">Romberg Integration</a>
+            <li><a href = "secant_method.html">Secant Method</a>
+            <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+            <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+            <li><a href = "conjugate.html">Conjugate</a>
+            
+
+            
+
+        </ul>
+    </li>
+    </ul>
+
+    <h1>Multiple Linear Regression</h1>
+    <p>Enter data in the format: X1,X2,...,Xn,Y for each row. Separate rows with newlines.</p>
+    <textarea id="dataInput" placeholder="e.g. 1,2,3,4\n2,3,4,5\n4,5,6,7"></textarea>
+    <br>
+    <button onclick="performRegression()">Perform Regression</button>
+  
+    <div id="results"></div>
+    <script>
+        // Function to perform Multiple Linear Regression
+        function performRegression() {
+          const dataInput = document.getElementById('dataInput').value.trim();
+          if (!dataInput) {
+            alert('Please enter some data.');
+            return;
+          }
+    
+          // Parse the data input into an array of rows and columns
+          const rows = dataInput.split('\n').map(row => row.split(',').map(Number));
+          const X = rows.map(row => row.slice(0, row.length - 1)); // Independent variables
+          const Y = rows.map(row => row[row.length - 1]); // Dependent variable
+    
+          // Perform regression
+          const result = multipleLinearRegression(X, Y);
+          displayResults(result);
+        }
+    
+        // Multiple Linear Regression Calculation (using the normal equation)
+        function multipleLinearRegression(X, Y) {
+          const X_with_intercept = X.map(row => [1, ...row]); // Add a column of ones for the intercept
+          const X_transpose = transpose(X_with_intercept);
+          const X_transpose_X = multiplyMatrices(X_transpose, X_with_intercept);
+          const X_transpose_Y = multiplyMatrices(X_transpose, Y);
+          
+          // Solve for coefficients (b = (X^T * X)^-1 * X^T * Y)
+          const X_transpose_X_inv = invertMatrix(X_transpose_X);
+          const coefficients = multiplyMatrices(X_transpose_X_inv, X_transpose_Y);
+    
+          return coefficients;
+        }
+    
+        // Helper function to transpose a matrix
+        function transpose(matrix) {
+          return matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]));
+        }
+    
+        // Helper function to multiply two matrices
+        function multiplyMatrices(A, B) {
+          const result = [];
+          for (let i = 0; i < A.length; i++) {
+            result[i] = [];
+            for (let j = 0; j < B[0].length; j++) {
+              result[i][j] = A[i].reduce((sum, a, k) => sum + a * B[k][j], 0);
+            }
+          }
+          return result;
+        }
+    
+        // Helper function to multiply a matrix and a vector
+        function multiplyMatrices(A, B) {
+          return A.map(row => row.reduce((sum, cell, idx) => sum + cell * B[idx], 0));
+        }
+    
+        // Helper function to invert a matrix using Gaussian elimination
+        function invertMatrix(matrix) {
+          const n = matrix.length;
+          const identity = matrix.map((row, i) => row.map((_, j) => (i === j ? 1 : 0)));
+          const augmentedMatrix = matrix.map((row, i) => [...row, ...identity[i]]);
+    
+          for (let i = 0; i < n; i++) {
+            let maxRow = i;
+            for (let j = i + 1; j < n; j++) {
+              if (Math.abs(augmentedMatrix[j][i]) > Math.abs(augmentedMatrix[maxRow][i])) {
+                maxRow = j;
+              }
+            }
+    
+            if (i !== maxRow) {
+              [augmentedMatrix[i], augmentedMatrix[maxRow]] = [augmentedMatrix[maxRow], augmentedMatrix[i]];
+            }
+    
+            const divisor = augmentedMatrix[i][i];
+            for (let j = 0; j < 2 * n; j++) {
+              augmentedMatrix[i][j] /= divisor;
+            }
+    
+            for (let j = 0; j < n; j++) {
+              if (j !== i) {
+                const factor = augmentedMatrix[j][i];
+                for (let k = 0; k < 2 * n; k++) {
+                  augmentedMatrix[j][k] -= factor * augmentedMatrix[i][k];
+                }
+              }
+            }
+          }
+    
+          return augmentedMatrix.map(row => row.slice(n));
+        }
+    
+        // Function to display the regression results
+        function displayResults(coefficients) {
+          const resultsDiv = document.getElementById('results');
+          resultsDiv.innerHTML = '';
+    
+          let equation = 'Y = ';
+          equation += coefficients.map((coef, idx) => (idx === 0 ? `${coef}` : ` + ${coef} * X${idx}`)).join('');
+          
+          resultsDiv.innerHTML = `<h2>Regression Coefficients</h2><pre>${JSON.stringify(coefficients, null, 2)}</pre>
+                                  <h2>Regression Equation</h2><pre>${equation}</pre>`;
+        }
+      </script>
+
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>

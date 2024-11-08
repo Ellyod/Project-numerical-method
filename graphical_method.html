@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>graphical method</title>
+    <link rel = "stylesheet" href="style.css">
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input {
+            margin: 5px;
+            padding: 5px;
+            width: 100px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .graph-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+    </style>
+    
+</head>
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+            <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+            <li><a href="bisection.html">Bisection</a></li>
+            <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+            <li><a href = "composite_simpson.html">Composite Simpson</a>
+            <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+            <li><a href = "cramers.html">Cramer's Rule</a>
+            <li><a href = "definite_integration.html">Definite Integration</a>
+            <li><a href = "double_integration.html">Double Integration</a>
+            <li><a href = "exact_integration.html">Exact Integration</a>
+            <li><a href = "false_position.html">False Position</a>
+            <li><a href = "first_divided_difference.html">First Divided Difference</a>
+            <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+            <li><a href = "gauss_integration.html">Gauss Integration</a>
+            <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+            <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+            <li><a href = "gradient_descent.html">Gradient Descent</a>
+            <li><a href = "graphical_method.html">Graphical Method</a>
+            <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+            <li><a href = "lu_decomposition.html">LU Decomposition</a>
+            <li><a href = "multiple_regression.html">Multiple Regression</a>
+            <li><a href = "newton_raphson.html">Newton-Raphson</a>
+            <li><a href = "numerical_integration.html">Numerical Integration</a>
+            <li><a href = "one_point_iteration.html">One-point Interation</a>
+            <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+            <li><a href = "regression.html">Regression</a>
+            <li><a href = "romberg_integration.html">Romberg Integration</a>
+            <li><a href = "secant_method.html">Secant Method</a>
+            <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+            <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+            <li><a href = "conjugate.html">Conjugate</a>
+            
+
+            
+
+        </ul>
+    </li>
+    </ul>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const GraphicalMethod = () => {
+            const [functionStr, setFunctionStr] = useState("x**2 - 4");
+            const [intervalA, setIntervalA] = useState(-10);
+            const [intervalB, setIntervalB] = useState(10);
+            const [plotData, setPlotData] = useState(null);
+
+            const evaluateFunction = (func, x) => {
+                try {
+                    return eval(func.replace(/x/g, `(${x})`));
+                } catch (error) {
+                    return NaN;
+                }
+            };
+
+            const generatePlotData = () => {
+                const xValues = [];
+                const yValues = [];
+                const step = (intervalB - intervalA) / 100;
+
+                for (let x = intervalA; x <= intervalB; x += step) {
+                    xValues.push(x);
+                    yValues.push(evaluateFunction(functionStr, x));
+                }
+
+                setPlotData({
+                    x: xValues,
+                    y: yValues,
+                    type: 'scatter',
+                    mode: 'lines',
+                    marker: { color: 'blue' },
+                    name: 'f(x)'
+                });
+            };
+
+            const plotGraph = () => {
+                if (plotData) {
+                    Plotly.newPlot('plot', [plotData], {
+                        title: 'Graphical Method Plot',
+                        xaxis: { title: 'x' },
+                        yaxis: { title: 'f(x)' }
+                    });
+                }
+            };
+
+            React.useEffect(() => {
+                if (plotData) {
+                    plotGraph();
+                }
+            }, [plotData]);
+
+            return (
+                <div style={{ maxWidth: "600px", margin: "auto" }}>
+                    <h2>Graphical Method for Finding Roots</h2>
+
+                    <div>
+                        <label>Function, f(x) = </label>
+                        <input
+                            type="text"
+                            value={functionStr}
+                            onChange={(e) => setFunctionStr(e.target.value)}
+                            placeholder="e.g., x**2 - 4"
+                        />
+                    </div>
+
+                    <div>
+                        <label>Interval [a, b]:</label>
+                        <input
+                            type="number"
+                            value={intervalA}
+                            onChange={(e) => setIntervalA(parseFloat(e.target.value))}
+                        />
+                        <input
+                            type="number"
+                            value={intervalB}
+                            onChange={(e) => setIntervalB(parseFloat(e.target.value))}
+                        />
+                    </div>
+
+                    <button onClick={generatePlotData}>Plot Function</button>
+
+                    <div className="graph-container">
+                        <div id="plot"></div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<GraphicalMethod />, document.getElementById('root'));
+    </script>
+
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>

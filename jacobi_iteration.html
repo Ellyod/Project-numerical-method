@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical Calculator</title>
+    <link rel = "stylesheet" href="style.css">
+    
+</head>
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+            <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+            <li><a href="bisection.html">Bisection</a></li>
+            <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+            <li><a href = "composite_simpson.html">Composite Simpson</a>
+            <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+            <li><a href = "cramers.html">Cramer's Rule</a>
+            <li><a href = "definite_integration.html">Definite Integration</a>
+            <li><a href = "double_integration.html">Double Integration</a>
+            <li><a href = "exact_integration.html">Exact Integration</a>
+            <li><a href = "false_position.html">False Position</a>
+            <li><a href = "first_divided_difference.html">First Divided Difference</a>
+            <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+            <li><a href = "gauss_integration.html">Gauss Integration</a>
+            <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+            <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+            <li><a href = "gradient_descent.html">Gradient Descent</a>
+            <li><a href = "graphical_method.html">Graphical Method</a>
+            <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+            <li><a href = "lu_decomposition.html">LU Decomposition</a>
+            <li><a href = "multiple_regression.html">Multiple Regression</a>
+            <li><a href = "newton_raphson.html">Newton-Raphson</a>
+            <li><a href = "numerical_integration.html">Numerical Integration</a>
+            <li><a href = "one_point_iteration.html">One-point Interation</a>
+            <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+            <li><a href = "regression.html">Regression</a>
+            <li><a href = "romberg_integration.html">Romberg Integration</a>
+            <li><a href = "secant_method.html">Secant Method</a>
+            <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+            <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+            <li><a href = "conjugate.html">Conjugate</a>
+            
+
+            
+
+        </ul>
+    </li>
+    </ul>
+    <h1>Jacobi Iteration Method</h1>
+    <p>Enter the augmented matrix in the format: a11, a12, ..., a1n, b1 for each row. Separate rows with newlines.</p>
+    <textarea id="dataInput" placeholder="e.g. 4,1,2,9\n1,3,2,8\n1,1,5,12"></textarea>
+    <br>
+    <button onclick="performJacobi()">Perform Jacobi Iteration</button>
+
+    <div id="results"></div>
+    <script>
+        function performJacobi() {
+          const dataInput = document.getElementById('dataInput').value.trim();
+          if (!dataInput) {
+            alert('Please enter some data.');
+            return;
+          }
+
+          const rows = dataInput.split('\n').map(row => row.split(',').map(Number));
+          const A = rows.map(row => row.slice(0, row.length - 1));
+          const B = rows.map(row => row[row.length - 1]);
+
+          const tolerance = 0.0001;
+          const maxIterations = 100;
+
+          const result = jacobiIteration(A, B, tolerance, maxIterations);
+          displayResults(result);
+        }
+
+        function jacobiIteration(A, B, tolerance, maxIterations) {
+          const n = A.length;
+          let X = new Array(n).fill(0);
+          let X_new = new Array(n).fill(0);
+
+          for (let iteration = 0; iteration < maxIterations; iteration++) {
+            for (let i = 0; i < n; i++) {
+              let sum = B[i];
+              for (let j = 0; j < n; j++) {
+                if (i !== j) {
+                  sum -= A[i][j] * X[j];
+                }
+              }
+              X_new[i] = sum / A[i][i];
+            }
+
+            if (X_new.every((x_new, i) => Math.abs(x_new - X[i]) < tolerance)) {
+              return { solution: X_new, iterations: iteration + 1 };
+            }
+            
+            X = [...X_new];
+          }
+
+          return { solution: X_new, iterations: maxIterations, message: "Max iterations reached" };
+        }
+
+        function displayResults(result) {
+          const resultsDiv = document.getElementById('results');
+          resultsDiv.innerHTML = '';
+
+          if (result.message) {
+            resultsDiv.innerHTML += `<h2>Result</h2><pre>${result.message}</pre>`;
+          }
+          resultsDiv.innerHTML += `<h2>Solution</h2><pre>${JSON.stringify(result.solution, null, 2)}</pre>
+                                   <h2>Iterations</h2><pre>${result.iterations}</pre>`;
+        }
+    </script>
+
+
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>

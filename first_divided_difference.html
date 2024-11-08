@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Divided Difference</title>
+    <link rel = "stylesheet" href="style.css">
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.0.0/math.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input {
+            margin: 5px 0;
+            padding: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        label {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+            <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+            <li><a href="bisection.html">Bisection</a></li>
+            <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+            <li><a href = "composite_simpson.html">Composite Simpson</a>
+            <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+            <li><a href = "cramers.html">Cramer's Rule</a>
+            <li><a href = "definite_integration.html">Definite Integration</a>
+            <li><a href = "double_integration.html">Double Integration</a>
+            <li><a href = "exact_integration.html">Exact Integration</a>
+            <li><a href = "false_position.html">False Position</a>
+            <li><a href = "first_divided_difference.html">First Divided Difference</a>
+            <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+            <li><a href = "gauss_integration.html">Gauss Integration</a>
+            <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+            <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+            <li><a href = "gradient_descent.html">Gradient Descent</a>
+            <li><a href = "graphical_method.html">Graphical Method</a>
+            <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+            <li><a href = "lu_decomposition.html">LU Decomposition</a>
+            <li><a href = "multiple_regression.html">Multiple Regression</a>
+            <li><a href = "newton_raphson.html">Newton-Raphson</a>
+            <li><a href = "numerical_integration.html">Numerical Integration</a>
+            <li><a href = "one_point_iteration.html">One-point Interation</a>
+            <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+            <li><a href = "regression.html">Regression</a>
+            <li><a href = "romberg_integration.html">Romberg Integration</a>
+            <li><a href = "secant_method.html">Secant Method</a>
+            <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+            <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+            <li><a href = "conjugate.html">Conjugate</a>
+            
+
+            
+
+        </ul>
+    </li>
+    </ul>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const FirstDividedDifference = () => {
+            const [x, setX] = React.useState(1); // The point at which to evaluate the derivative
+            const [h, setH] = React.useState(0.0001); // Step size h
+            const [functionInput, setFunctionInput] = React.useState("x^2"); // Default function
+            const [result, setResult] = React.useState(null);
+
+            const evaluateFunction = (x) => {
+                try {
+                    return math.evaluate(functionInput, { x });
+                } catch (error) {
+                    return NaN; // Return NaN for invalid functions
+                }
+            };
+
+            const calculateFirstDividedDifference = () => {
+                const fx = evaluateFunction(x);
+                const fxh = evaluateFunction(x + h);
+
+                if (isNaN(fx) || isNaN(fxh)) {
+                    setResult("Error: Please check your function input.");
+                    return;
+                }
+
+                const firstDividedDifference = (fxh - fx) / h;
+                setResult(`The approximate derivative at x = ${x} is: ${firstDividedDifference}`);
+            };
+
+            return (
+                <div style={{ maxWidth: "600px", margin: "auto" }}>
+                    <h2>First Divided Difference Calculator</h2>
+
+                    <div>
+                        <label>Function: 
+                            <input
+                                type="text"
+                                value={functionInput}
+                                onChange={(e) => setFunctionInput(e.target.value)}
+                                placeholder="Enter function in terms of 'x' (e.g., x^2)"
+                                style={{ width: "300px", padding: "5px" }}
+                            />
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>Point (x): 
+                            <input
+                                type="number"
+                                value={x}
+                                onChange={(e) => setX(Number(e.target.value))}
+                                style={{ width: "100px", padding: "5px" }}
+                            />
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>Step size (h): 
+                            <input
+                                type="number"
+                                value={h}
+                                onChange={(e) => setH(Number(e.target.value))}
+                                style={{ width: "100px", padding: "5px" }}
+                            />
+                        </label>
+                    </div>
+
+                    <button onClick={calculateFirstDividedDifference}>Calculate</button>
+
+                    {result && <h3>{result}</h3>}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<FirstDividedDifference />, document.getElementById('root'));
+    </script>
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>

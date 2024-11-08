@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numerical Calculator</title>
+    <link rel = "stylesheet" href="style.css">
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input {
+            margin: 5px 0;
+            padding: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        label {
+            margin-right: 10px;
+        }
+    </style>
+    
+</head>
+<body>
+    <ul>
+        <li><a href ="index.html">Home</a></li>
+        <li>
+        <a href = "index.html">Calculation Method ⇩</a>
+        <ul class = "dropdown">
+            <li><a href="backward_divided.html">Backward Divided Difference</a></li>
+            <li><a href="bisection.html">Bisection</a></li>
+            <li><a href = "central_divided_difference.html">Central Divided Difference</a>
+            <li><a href = "composite_simpson.html">Composite Simpson</a>
+            <li><a href = "composite_trapezoidal.html">Composite Trapezoidal Rule</a>
+            <li><a href = "cramers.html">Cramer's Rule</a>
+            <li><a href = "definite_integration.html">Definite Integration</a>
+            <li><a href = "double_integration.html">Double Integration</a>
+            <li><a href = "exact_integration.html">Exact Integration</a>
+            <li><a href = "false_position.html">False Position</a>
+            <li><a href = "first_divided_difference.html">First Divided Difference</a>
+            <li><a href = "forward_divided_difference.html">Forward Divided Difference</a>
+            <li><a href = "gauss_integration.html">Gauss Integration</a>
+            <li><a href = "gauss_seidel.html">Gauss Seidel</a>
+            <li><a href = "gaussian_elimination.html">Gaussian Elimination</a>
+            <li><a href = "gradient_descent.html">Gradient Descent</a>
+            <li><a href = "graphical_method.html">Graphical Method</a>
+            <li><a href = "lagrange_interpolation.html">Lagrange Interpolation</a>
+            <li><a href = "lu_decomposition.html">LU Decomposition</a>
+            <li><a href = "multiple_regression.html">Multiple Regression</a>
+            <li><a href = "newton_raphson.html">Newton-Raphson</a>
+            <li><a href = "numerical_integration.html">Numerical Integration</a>
+            <li><a href = "one_point_iteration.html">One-point Interation</a>
+            <li><a href = "polynomial_regression.html">Polynomial Regression</a>
+            <li><a href = "regression.html">Regression</a>
+            <li><a href = "romberg_integration.html">Romberg Integration</a>
+            <li><a href = "secant_method.html">Secant Method</a>
+            <li><a href = "simpoint_iteration.html">Simpoint Iteration</a>
+            <li><a href = "jacobi_iteration.html">Jacobi Iteration</a>
+            <li><a href = "conjugate.html">Conjugate</a>
+            
+
+            
+
+        </ul>
+    </li>
+    </ul>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const DoubleIntegration = () => {
+            const [a, setA] = React.useState(0); // Lower limit for x
+            const [b, setB] = React.useState(0); // Upper limit for x
+            const [c, setC] = React.useState(0); // Lower limit for y
+            const [d, setD] = React.useState(0); // Upper limit for y
+            const [n, setN] = React.useState(10); // Number of intervals for each axis
+            const [functionInput, setFunctionInput] = React.useState("x*y"); // Default function
+            const [result, setResult] = React.useState(null);
+
+            // Function to evaluate the given function at specific x and y
+            const evaluateFunction = (x, y) => {
+                try {
+                    return eval(functionInput.replace(/x/g, `(${x})`).replace(/y/g, `(${y})`));
+                } catch (e) {
+                    return NaN; // In case of an invalid function
+                }
+            };
+
+            // Trapezoidal Rule for Double Integration
+            const trapezoidalRuleDouble = (a, b, c, d, n) => {
+                const hx = (b - a) / n; // Step size for x
+                const hy = (d - c) / n; // Step size for y
+                let sum = 0;
+
+                // Double loop for trapezoidal sum over the grid of x and y
+                for (let i = 0; i <= n; i++) {
+                    for (let j = 0; j <= n; j++) {
+                        const x = a + i * hx;
+                        const y = c + j * hy;
+                        let weight = 1;
+
+                        // Weight the corner points
+                        if (i === 0 || i === n) weight *= 0.5;
+                        if (j === 0 || j === n) weight *= 0.5;
+
+                        sum += weight * evaluateFunction(x, y);
+                    }
+                }
+
+                return sum * hx * hy; // Multiply by the area of each rectangle
+            };
+
+            const handleCalculate = () => {
+                const integralResult = trapezoidalRuleDouble(a, b, c, d, n);
+                setResult(`The double integral result is: ${integralResult}`);
+            };
+
+            return (
+                <div style={{ maxWidth: "600px", margin: "auto" }}>
+                    <h2>Double Integration Calculator</h2>
+
+                    <div>
+                        <label>Function: 
+                            <input
+                                type="text"
+                                value={functionInput}
+                                onChange={(e) => setFunctionInput(e.target.value)}
+                                placeholder="Enter function in terms of 'x' and 'y' (e.g., x*y)"
+                                style={{ width: "300px", padding: "5px" }}
+                            />
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>Lower limit for x (a): 
+                            <input
+                                type="number"
+                                value={a}
+                                onChange={(e) => setA(Number(e.target.value))}
+                                style={{ width: "100px", padding: "5px" }}
+                            />
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>Upper limit for x (b): 
+                            <input
+                                type="number"
+                                value={b}
+                                onChange={(e) => setB(Number(e.target.value))}
+                                style={{ width: "100px", padding: "5px" }}
+                            />
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>Lower limit for y (c): 
+                            <input
+                                type="number"
+                                value={c}
+                                onChange={(e) => setC(Number(e.target.value))}
+                                style={{ width: "100px", padding: "5px" }}
+                            />
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>Upper limit for y (d): 
+                            <input
+                                type="number"
+                                value={d}
+                                onChange={(e) => setD(Number(e.target.value))}
+                                style={{ width: "100px", padding: "5px" }}
+                            />
+                        </label>
+                    </div>
+
+                    <div>
+                        <label>Number of intervals (n): 
+                            <input
+                                type="number"
+                                value={n}
+                                onChange={(e) => setN(Number(e.target.value))}
+                                style={{ width: "100px", padding: "5px" }}
+                            />
+                        </label>
+                    </div>
+
+                    <button onClick={handleCalculate}>Calculate</button>
+
+                    {result && <h3>{result}</h3>}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<DoubleIntegration />, document.getElementById('root'));
+    </script>
+
+
+
+
+<div class="bottom-bar">
+
+    <p>&copy; 2024 Super Numerical Calculator . All rights reserved</p>
+
+</div>
+
+
+</body>
+</html>
